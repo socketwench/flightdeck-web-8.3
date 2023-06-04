@@ -5,8 +5,6 @@
 - name: clear caches
   shell: >
     rm -rf {{ item }}
-  args:
-    warn: no
   loop:
     - "/tmp/*"
     - "/var/cache/apk/*"
