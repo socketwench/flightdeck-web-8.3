@@ -185,6 +185,7 @@
 - name: Install Terminus
   get_url:
     url: "https://github.com/pantheon-systems/terminus/releases/download/3.2.1/terminus.phar"
+    checksum: "sha512:63d2c0af2f450c85b9596163261e07edf9c94c62f368f3e443ff44e7839d483474729a96f349e5ac405148888a06c04e6f3327bbb55468a008dbcf0e38295293"
     dest: "/usr/local/bin/terminus"
     owner: "apache"
     group: "apache"
@@ -206,6 +207,8 @@
 - name: Install the Platform CLI
   shell: >
     {{ _platform_tempfile.path }}
+  environment:
+    VERSION: "4.6.1"
 - name: Configure ODBC
   template:
     src: "templates/odbcinst.ini"
