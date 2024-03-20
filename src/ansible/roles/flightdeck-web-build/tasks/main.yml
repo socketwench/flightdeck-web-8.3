@@ -4,79 +4,84 @@
     name: "ten7.flightdeck_base"
 - name: Install needed software
   apk:
-    name: "{{ item }}"
+    name: "{{ _pkgs | join(',') }}"
     state: present
     update_cache: yes
-  loop:
-    - "apache2"
-    - "libcap"
-    - "zlib"
-    - "apache2"
-    - "apache2-proxy"
-    - "php82-apache2"
-    - "php82"
-    - "git"
-    - "patch"
-    - "curl"
-    - "php82-bcmath"
-    - "php82-ctype"
-    - "php82-curl"
-    - "php82-dom"
-    - "php82-fileinfo"
-    - "php82-gd"
-    - "php82-iconv"
-    - "php82-intl"
-    - "php82-json"
-    - "php82-ldap"
-    - "php82-mbstring"
-    - "php82-pecl-memcached"
-    - "php82-mysqli"
-    - "php82-mysqlnd"
-    - "php82-opcache"
-    - "php82-openssl"
-    - "php82-pecl-apcu"
-    - "php82-pecl-imagick"
-    - "php82-phar"
-    - "php82-sqlite3"
-    - "php82-odbc"
-    - "php82-pdo_odbc"
-    - "php82-pdo"
-    - "php82-pdo_mysql"
-    - "php82-pdo_sqlite"
-    - "php82-phar"
-    - "php82-pecl-redis"
-    - "php82-soap"
-    - "php82-session"
-    - "php82-simplexml"
-    - "php82-sodium"
-    - "php82-tokenizer"
-    - "php82-xdebug"
-    - "php82-exif"
-    - "php82-xml"
-    - "php82-xmlreader"
-    - "php82-xmlwriter"
-    - "php82-zip"
-    - "php82-zlib"
-    - "py3-passlib"
-    - "py3-mysqlclient"
-    - "py3-jmespath"
-    - "composer"
-    - "mariadb-client"
-    - "rsync"
-    - "openssh-client"
-    - "unixodbc-dev"
-    - "freetds-dev"
-    - "nodejs"
-    - "npm"
-    - "libsass"
-    - "nano"
-    - "yarn"
+  vars:
+    _pkgs:
+      - "apache2"
+      - "libcap"
+      - "zlib"
+      - "apache2"
+      - "apache2-proxy"
+      - "php82-apache2"
+      - "php82"
+      - "git"
+      - "patch"
+      - "curl"
+      - "go-task"
+      - "php82-bcmath"
+      - "php82-ctype"
+      - "php82-curl"
+      - "php82-dom"
+      - "php82-fileinfo"
+      - "php82-gd"
+      - "php82-iconv"
+      - "php82-intl"
+      - "php82-json"
+      - "php82-ldap"
+      - "php82-mbstring"
+      - "php82-pecl-memcached"
+      - "php82-mysqli"
+      - "php82-mysqlnd"
+      - "php82-opcache"
+      - "php82-openssl"
+      - "php82-pecl-apcu"
+      - "php82-pecl-imagick"
+      - "php82-phar"
+      - "php82-sqlite3"
+      - "php82-odbc"
+      - "php82-pdo_odbc"
+      - "php82-pdo"
+      - "php82-pdo_mysql"
+      - "php82-pdo_sqlite"
+      - "php82-phar"
+      - "php82-pecl-redis"
+      - "php82-soap"
+      - "php82-session"
+      - "php82-simplexml"
+      - "php82-sodium"
+      - "php82-tokenizer"
+      - "php82-xdebug"
+      - "php82-exif"
+      - "php82-xml"
+      - "php82-xmlreader"
+      - "php82-xmlwriter"
+      - "php82-zip"
+      - "php82-zlib"
+      - "py3-passlib"
+      - "py3-mysqlclient"
+      - "py3-jmespath"
+      - "composer"
+      - "mariadb-client"
+      - "rsync"
+      - "openssh-client"
+      - "nodejs"
+      - "npm"
+      - "libsass"
   notify:
     - clear caches
 - name: Add global php symlink
   file:
     src: "/usr/bin/php82"
     dest: "/usr/local/bin/php"
+    state: link
+    force: yes
+    follow: no
+- name: Add global go-task symlink
+  file:
+    src: "/usr/bin/go-task"
+    dest: "/usr/local/bin/task"
     state: link
     force: yes
     follow: no
@@ -98,7 +103,6 @@
     - "/etc/ssl/apache2"
     - "/etc/apache2/sites.d"
     - "/etc/php82"
-    - "/etc/wpcli"
     - "/run/apache2"
     - "/var/log/apache2"
     - "/var/www"
@@ -126,40 +130,6 @@
     - "/var/log/apache2/error.log"
     - "/var/log/apache2/000_default-error_log"
     - "/var/log/apache2/000_default_ssl-error_log"
-- name: Make directories for cli utilities
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "apache"
-    group: "apache"
-    mode: "u=rwx,g=rwx,o=r"
-  loop:
-    - "/etc/wpcli"
-    - "/var/www/.composer/vendor/bin"
-  become: yes
-  become_user: "apache"
-  become_method: "su"
-  register: command_output
-- debug:
-    var: command_output.stdout_lines
-- name: Install Wordpress CLI
-  get_url:
-    url: "https://github.com/wp-cli/wp-cli/releases/download/v2.8.1/wp-cli-2.8.1.phar"
-    checksum: "sha512:c1d40ee90b330ca1f8ddbed14b938b41ec5d9ff723c7c1cf3f41a2d9a1b271079a51a37ea3d1c9aa9c628fdd43449dba3995a8de150a68abbd505b06b91d9d2b"
-    dest: "/etc/wpcli/wp"
-    owner: "apache"
-    group: "apache"
-    mode: "u=rx,g=rx,o=rx"
-- name: Add global symlinks
-  file:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    state: link
-    force: yes
-    follow: no
-  loop:
-    - src: "/etc/wpcli/wp"
-      dest: "/usr/local/bin/wp"
 - name: Set node global packages to install as user-local
   shell: >
     npm config set prefix '/var/www/.npm-global'
@@ -172,52 +142,6 @@
   become: yes
   become_user: "apache"
   become_method: "su"
-- name: Install Terminus
-  get_url:
-    url: "https://github.com/pantheon-systems/terminus/releases/download/3.2.1/terminus.phar"
-    dest: "/usr/local/bin/terminus"
-    owner: "apache"
-    group: "apache"
-    mode: "u=rx,g=rx,o="
-- name: Create temp file for the Platform CLI installer
-  tempfile:
-    state: file
-    prefix: installer
-    suffix: .sh
-  register: _platform_tempfile
-- name: Download Platform CLI installer
-  get_url:
-    url: "https://raw.githubusercontent.com/platformsh/cli/main/installer.sh"
-    checksum: "sha512:79a2bd8fbb48eac4877b89d207f94151061fa41da4e06b9f92f1ad2d14989ad2919d7386c56d15618dff3315a1d1920eac79bf5dde1537a50b01a6b6aba97016"
-    dest: "{{ _platform_tempfile.path }}"
-    owner: "root"
-    group: "root"
-    mode: "u=rx,g=rx,o="
-- name: Install the Platform CLI
-  shell: >
-    {{ _platform_tempfile.path }}
-- name: Configure ODBC
-  template:
-    src: "templates/odbcinst.ini"
-    dest: "/etc/odbcinst.ini"
-    owner: "root"
-    group: "root"
-    mode: "u=rw,g=r,o=r"
-- name: Install the Acquia CLI
-  get_url:
-    url: "https://github.com/acquia/cli/releases/download/2.11.1/acli.phar"
-    checksum: "sha512:5c3fcd6f3553a719f99d05d8499d39bf7a5f3ab07a6bdd207ef282a8e838537597dd8e6f332a3e6df4725af3f3a168e376b54fec8fc5a6c49a2f32358f65943a"
-    dest: "/usr/local/bin/acli"
-    owner: "apache"
-    group: "apache"
-    mode: "u=rx,g=rx,o="
-- name: Configure ODBC
-  template:
-    src: "templates/odbcinst.ini"
-    dest: "/etc/odbcinst.ini"
-    owner: "root"
-    group: "root"
-    mode: "u=rw,g=r,o=r"
 - name: Template default index.html
   template:
     src: "templates/index.html"
