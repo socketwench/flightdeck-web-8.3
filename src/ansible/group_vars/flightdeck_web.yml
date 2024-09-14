@@ -1,22 +1,20 @@
 ---
-flighdeck_motd_name: web 8.2
+flighdeck_motd_name: web 8.3
 
 flightdeck_groups:
-  - name: "apache"
+  - name: "app"
 
 flightdeck_users:
-  - name: "apache"
-    group: "apache"
+  - name: "app"
+    group: "app"
     home: "/var/www"
 
-flightdeck_root_prompt: '\u@flightdeck-web-8.2:\w# '
-flightdeck_user_prompt: '\u@flightdeck-web-8.2:\w$ '
+flightdeck_root_prompt: '\u@flightdeck-web-8.3:\w# '
+flightdeck_user_prompt: '\u@flightdeck-web-8.3:\w$ '
 
 flightdeck_motd_links:
-  - name: 'Code & docs'
-    url: 'https://github.com/ten7/flightdeck-web-8.2'
-  - name: ' Learn more'
-    url: 'https://flightdeck.ten7.com/'
+  - name: 'Code'
+    url: 'https://github.com/socketwench/flightdeck-web-8.3'
 
 flightdeck_init_commands: |
   if [ -f "/ansible/init.yml" ]; then

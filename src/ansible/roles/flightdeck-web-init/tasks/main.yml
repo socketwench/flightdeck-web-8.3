@@ -13,8 +13,8 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "apache"
-    group: "apache"
+    owner:  "app"
+    group:  "app"
     mode: "u=rw,g=r,o="
   loop:
     - src: "templates/httpd.conf"
@@ -25,22 +25,22 @@
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    owner: "apache"
-    group: "apache"
+    owner:  "app"
+    group:  "app"
     mode: "u=rw,g=r,o="
   loop:
     - src: "templates/php.ini"
-      dest: "/etc/php82/php.ini"
+      dest: "/etc/php83/php.ini"
     - src: "templates/00_opcache.ini"
-      dest: "/etc/php82/conf.d/00_opcache.ini"
+      dest: "/etc/php83/conf.d/00_opcache.ini"
     - src: "templates/apcu.ini"
-      dest: "/etc/php82/conf.d/apcu.ini"
+      dest: "/etc/php83/conf.d/apcu.ini"
 - name: Configure xdebug
   template:
     src: "templates/50_xdebug.ini"
-    dest: "/etc/php82/conf.d/50_xdebug.ini"
-    owner: "apache"
-    group: "apache"
+    dest: "/etc/php83/conf.d/50_xdebug.ini"
+    owner:  "app"
+    group:  "app"
     mode: "u=rw,g=r,o="
 - name: Update initial directory
   lineinfile:
