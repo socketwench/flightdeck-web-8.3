@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.20
 # MAINTAINER tess@ten7.com
 
 # Update the package list and install Ansible.
@@ -24,7 +24,7 @@ EXPOSE 80
 WORKDIR /var/www
 
 # Switch to the service account.
-USER apache
+USER app
 
 # Set the entrypoint and default command.
 ENTRYPOINT ["docker-entrypoint.sh"]
