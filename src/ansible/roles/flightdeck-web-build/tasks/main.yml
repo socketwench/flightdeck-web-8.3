@@ -87,6 +87,7 @@
     mode: "u=rwx,g=rwx,o=r"
     recurse: yes
   loop:
+    - "/ansible"
     - "/etc/apache2"
     - "/etc/ssl/apache2"
     - "/etc/apache2/sites.d"
